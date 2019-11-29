@@ -1,6 +1,6 @@
 const alunas = require("../model/alunas.json")
 const fs = require('fs');
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const bcryptSalt = 8;
 
 /*router.post("/signup", (req, res, next) => {
@@ -73,7 +73,7 @@ exports.post = async (req, res) => {
   const { nome, password, dateOfBirth, nasceuEmSp, id, livros } = req.body;
   const salt = bcrypt.genSaltSync(bcryptSalt);
   try {
-    const hashPass = await bcrypt.hashSync(password, salt);
+    const hashPass = await bcrypt.hashSync(password, salt); //Sync para json e Async para banco de dados
     alunas.push({ nome, hashPass, dateOfBirth, nasceuEmSp, id, livros });
   
     fs.writeFile("./src/model/alunas.json", JSON.stringify(alunas), 'utf8', function (err) {
@@ -81,7 +81,7 @@ exports.post = async (req, res) => {
         return res.status(500).send({ message: err });
       }
       console.log("The file was saved!");
-    }); 
+    });   
     return res.status(201).send(alunas); 
   } catch (e) {
     return res.status(401).json({ error: 'erro' });
